@@ -1,0 +1,55 @@
+server <- function(input, output) {
+  
+  # ---- PLOT 1 ------------------------------------------------------------
+  output$plot1 <- renderPlot({
+    
+    thePlot <- ggplot(
+      viz1_data %>% filter(Size != "Unknown"),
+      aes(x = Year, y = MeanRate, color = Size)
+    ) +
+      geom_line(linewidth = 1) +
+      geom_point(size = 2) +
+      scale_x_continuous(breaks = unique(df2$Year)) +
+      labs(
+        title = "Average Road Fatality Rate by City Size (All Years)",
+        x = "Year",
+        y = "Deaths per 100,000",
+        caption = "Large >400k | Medium 200k–80k | Small <80k"
+      ) +
+      theme_minimal() +
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    if (input$linear1) {
+      thePlot <- thePlot + geom_smooth(method = "lm", se = FALSE)
+    }
+    
+    thePlot
+  })
+  
+  
+  # ---- PLOT 2 ------------------------------------------------------------
+  output$plot2 <- renderPlot({
+    
+    thePlot <- ggplot(
+      df2 %>% filter(Size != "Unknown"),
+      aes(x = Size, y = Value, fill = Size)
+    ) +
+      geom_boxplot(outlier.shape = NA) +
+      geom_jitter(width = 0.15, alpha = 0.2, size = 1) +
+      labs(
+        title = "Distribution of Road Fatalities by City Size",
+        x = "City Size",
+        y = "Deaths per 100,000",
+        caption = "Large >400k | Medium 200k–80k | Small <80k"
+      ) +
+      theme_minimal() +
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    if (input$linear2) {
+      thePlot <- thePlot + geom_smooth(method = "lm", se = FALSE)
+    }
+    
+    thePlot
+  })
+  
+}
